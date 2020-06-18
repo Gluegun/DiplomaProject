@@ -1,3 +1,6 @@
 .idea
 *.iml
 target
+
+src/main/resources/hibernate.cfg.xml
+src/main/java/app/Test/Test.java
