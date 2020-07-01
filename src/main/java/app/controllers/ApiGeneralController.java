@@ -1,5 +1,8 @@
-package app.controller;
+package app.controllers;
 
+import app.dto.Blog;
+import app.repos.PostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,15 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ApiGeneralController {
 
-    @GetMapping("/init")
-    public String init() {
-        return null;
+    @Autowired
+    private PostRepository postRepository;
 
+    @GetMapping("/init")
+    public Blog init() {
+        return new Blog();
     }
+
 
     @GetMapping("/settings")
     public String settings() {
-
         return null;
     }
 

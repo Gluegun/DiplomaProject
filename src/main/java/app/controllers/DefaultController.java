@@ -1,4 +1,4 @@
-package app.controller;
+package app.controllers;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/")
 public class DefaultController {
 
-    
+
 }

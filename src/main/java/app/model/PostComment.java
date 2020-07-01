@@ -18,15 +18,17 @@ public class PostComment {
     private Integer parentId;
 
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
     private Date time;
 
+    @Column(name = "text", length = 65535, columnDefinition = "TEXT", nullable = false)
     private String text;
 
     public PostComment() {

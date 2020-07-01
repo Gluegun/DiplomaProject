@@ -17,28 +17,34 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "is_active", columnDefinition = "TINYINT")
+    @Column(name = "is_active", columnDefinition = "TINYINT", nullable = false)
+//    @JsonProperty("is_active")
     private byte isActive;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ModerationStatus moderationStatus = ModerationStatus.NEW;
 
     @Column(name = "moderator_id")
-    private int moderatorId;
+//    @JsonProperty("moderator_id")
+    private Integer moderatorId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+//    @JsonManagedReference
     private User user;
 
-    private int userId;
-
+    @Column(nullable = false)
     private Date time;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(name = "text", length = 65535, columnDefinition = "TEXT", nullable = false)
     private String text;
 
     @Column(name = "view_count")
+//    @JsonProperty("view_count")
     private int viewCount;
 
     @OneToMany(mappedBy = "post")
@@ -61,5 +67,12 @@ public class Post {
         this.title = title;
         this.text = text;
         this.viewCount = viewCount;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                title +
+                "}";
     }
 }

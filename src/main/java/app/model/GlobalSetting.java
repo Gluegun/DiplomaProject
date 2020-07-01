@@ -15,12 +15,15 @@ public class GlobalSetting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
     private String code;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private GlobalSettingName name;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private GlobalSettingValue value;
 
     public GlobalSetting() {
