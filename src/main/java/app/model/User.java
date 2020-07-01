@@ -16,24 +16,33 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "is_moderator", columnDefinition = "TINYINT")
+    @Column(name = "is_moderator", columnDefinition = "TINYINT", nullable = false)
+//    @JsonProperty("is_moderator")
     private byte isModerator;
 
-    @Column(name = "reg_time")
+    @Column(name = "reg_time", nullable = false)
+//    @JsonProperty("reg_time")
     private Date registerTime;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String email;
 
+//    @JsonIgnore
+    @Column(nullable = false)
     private String password;
 
+//    @JsonIgnore
     private String code;
 
-    @Column(name = "photo")
+    @Column(name = "photo", columnDefinition = "TEXT")
+//    @JsonProperty("photo")
     private String photoLink;
 
     @OneToMany(mappedBy = "user")
+//    @JsonBackReference
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")

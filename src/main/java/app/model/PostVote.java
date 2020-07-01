@@ -22,9 +22,10 @@ public class PostVote {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Column(nullable = false)
     private Date time;
 
-    @Column(columnDefinition = "TINYINT")
+    @Column(columnDefinition = "TINYINT", nullable = false)
     private byte value;
 
     public PostVote() {
