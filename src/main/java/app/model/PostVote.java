@@ -1,41 +1,30 @@
 package app.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "post_votes")
 @Data
-public class PostVote {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+@Table(name = "post_votes")
+public class PostVote extends AbstractEntity {
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
     private Post post;
 
-    @Column(nullable = false)
-    private Date time;
+    @Column(name = "time", nullable = false)
+    private LocalDateTime time;
 
-    @Column(columnDefinition = "TINYINT", nullable = false)
+    @Column(name = "value", nullable = false)
     private byte value;
 
-    public PostVote() {
 
-    }
-
-    public PostVote(User user, Post post, Date time, byte value) {
-        this.user = user;
-        this.post = post;
-        this.time = time;
-        this.value = value;
-    }
 }

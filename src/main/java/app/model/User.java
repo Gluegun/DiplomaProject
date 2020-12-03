@@ -1,67 +1,54 @@
 package app.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users")
 @Data
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+@AllArgsConstructor
+@NoArgsConstructor
+public class User extends AbstractEntity {
 
     @Column(name = "is_moderator", columnDefinition = "TINYINT", nullable = false)
-//    @JsonProperty("is_moderator")
     private byte isModerator;
 
     @Column(name = "reg_time", nullable = false)
-//    @JsonProperty("reg_time")
-    private Date registerTime;
+    private LocalDateTime registerTime;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
-//    @JsonIgnore
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-//    @JsonIgnore
+    @Column(name = "code")
     private String code;
 
     @Column(name = "photo", columnDefinition = "TEXT")
-//    @JsonProperty("photo")
     private String photoLink;
 
-    @OneToMany(mappedBy = "user")
-//    @JsonBackReference
-    private List<Post> posts = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<PostVote> listVotes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<PostComment> listComments;
 
     @OneToMany(mappedBy = "user")
-    private List<PostComment> postComments = new ArrayList<>();
+    private List<Post> listPosts;
 
-    public User() {
+    @OneToMany(mappedBy = "moderator")
+    private List<Post> listModPosts;
 
-    }
 
-    public User(byte isModerator, Date registerTime,
-                String name, String email,
-                String password, String code,
-                String photoLink) {
-        this.isModerator = isModerator;
-        this.registerTime = registerTime;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.code = code;
-        this.photoLink = photoLink;
-    }
 }

@@ -4,7 +4,7 @@ spring:
     url: jdbc:mysql://localhost:3306/blogdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: validate
 

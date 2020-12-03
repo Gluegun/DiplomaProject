@@ -1,31 +1,26 @@
 package app.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.ArrayList;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "tags")
 @Data
-public class Tag {
+@Table(name = "tags")
+@NoArgsConstructor
+public class Tag extends AbstractEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(nullable = false)
+    @Column (name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "tag")
-    List<Tag2Post> tag2Posts = new ArrayList<>();
+    @ManyToMany(mappedBy = "listTags")
+    private List<Post> listPosts;
 
-    public Tag() {
-
-    }
-
-    public Tag(String name) {
-        this.name = name;
-    }
 }

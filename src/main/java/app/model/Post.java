@@ -2,77 +2,54 @@ package app.model;
 
 import app.model.enums.ModerationStatus;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "posts")
 @Data
-public class Post {
+@Table(name = "posts")
+public class Post extends AbstractEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(name = "is_active", columnDefinition = "TINYINT", nullable = false)
-//    @JsonProperty("is_active")
+    @Column(name = "is_active", nullable = false)
     private byte isActive;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "moderation_status", nullable = false)
     private ModerationStatus moderationStatus = ModerationStatus.NEW;
 
-    @Column(name = "moderator_id")
-//    @JsonProperty("moderator_id")
-    private Integer moderatorId;
+    @ManyToOne
+    @JoinColumn(name = "moderator_id", referencedColumnName = "id")
+    private User moderator;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-//    @JsonManagedReference
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private Date time;
+    @Column(name = "time", nullable = false)
+    private LocalDateTime time;
 
-    @Column(nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "text", length = 65535, columnDefinition = "TEXT", nullable = false)
+    @Column(name = "text", nullable = false, columnDefinition = "text")
     private String text;
 
-    @Column(name = "view_count")
-//    @JsonProperty("view_count")
+    @Column(name = "view_count", nullable = false)
     private int viewCount;
 
-    @OneToMany(mappedBy = "post")
-    private List<PostComment> postComments = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(name = "tag2post", joinColumns = {@JoinColumn(name = "post_id")}, inverseJoinColumns = {
+            @JoinColumn(name = "tag_id")})
+    private List<Tag> listTags;
 
-    @OneToOne (mappedBy = "post")
-    private Tag2Post tag2Post;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<PostVote> listVotes;
 
-    public Post() {
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<PostComment> listComments;
 
-    }
-
-    public Post(byte isActive, ModerationStatus moderationStatus, int moderatorId,
-                User user, Date time, String title, String text, int viewCount) {
-        this.isActive = isActive;
-        this.moderationStatus = moderationStatus;
-        this.moderatorId = moderatorId;
-        this.user = user;
-        this.time = time;
-        this.title = title;
-        this.text = text;
-        this.viewCount = viewCount;
-    }
-
-    @Override
-    public String toString() {
-        return "Post{" +
-                title +
-                "}";
-    }
 }

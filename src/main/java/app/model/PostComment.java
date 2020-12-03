@@ -1,46 +1,48 @@
 package app.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "post_comments")
 @Data
-public class PostComment {
+@Table(name = "post_comments")
+public class PostComment extends AbstractEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    private PostComment postComment;
 
-    @Column(name = "parent_id")
-    private Integer parentId;
-
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
     private Post post;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column(nullable = false)
-    private Date time;
+    @Column(name = "time", nullable = false)
+    private LocalDateTime time;
 
-    @Column(name = "text", length = 65535, columnDefinition = "TEXT", nullable = false)
+    @Column(name = "text", columnDefinition = "text", nullable = false)
     private String text;
 
-    public PostComment() {
+    @OneToMany(mappedBy = "postComment")
+    private List<PostComment> listComments;
 
+    public void addPostComment(PostComment postComment) {
+        listComments.add(postComment);
+        postComment.setPostComment(this);
     }
 
-    public PostComment(Integer parentId, Post post, User user, Date time, String text) {
-        this.parentId = parentId;
-        this.post = post;
-        this.user = user;
-        this.time = time;
-        this.text = text;
+    public void removePostComment(PostComment postComment) {
+        listComments.remove(postComment);
+        postComment.setPostComment(null);
     }
+
 
 }
