@@ -6,6 +6,7 @@ drop table if exists posts;
 drop table if exists tag2post;
 drop table if exists tags;
 drop table if exists users;
+
 create table captcha_codes
 (
     id          integer     not null auto_increment,
@@ -69,7 +70,7 @@ create table users
 (
     id           integer      not null auto_increment,
     code         varchar(255),
-    email        varchar(255) not null,
+    email        varchar(255) not null unique,
     is_moderator TINYINT      not null,
     name         varchar(255) not null,
     password     varchar(255) not null,
