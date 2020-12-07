@@ -1,8 +1,7 @@
 package app.model;
 
 import app.model.enums.ModerationStatus;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +11,9 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "posts")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Post extends AbstractEntity {
 
     @Column(name = "is_active", nullable = false)

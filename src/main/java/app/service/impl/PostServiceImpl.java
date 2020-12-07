@@ -1,6 +1,7 @@
 package app.service.impl;
 
 import app.dto.GeneralPostDto;
+import app.dto.PostForLikes;
 import app.mapper.Mapper;
 import app.model.Post;
 import app.model.PostVote;
@@ -8,11 +9,13 @@ import app.model.enums.ModerationStatus;
 import app.repos.PostRepository;
 import app.service.PostService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -23,86 +26,132 @@ public class PostServiceImpl implements PostService {
     private final Mapper mapper;
     private final PostRepository postRepository;
 
-    @Override
-    public GeneralPostDto getPostsActiveAndAcceptedByModerator() {
-
-        List<Post> allPostsFromDb = postRepository.findAll();
-
-        return mapper.toGeneralPostDto(allPostsFromDb.stream()
-                .filter(p -> p.getIsActive() == 1)
-                .filter(p -> p.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                .collect(Collectors.toList()));
-    }
 
     @Override
-    public GeneralPostDto getAllPosts() {
+    public GeneralPostDto getSortedAndPagedPosts(int offset, int limit, String mode) {
 
-        return mapper.toGeneralPostDto(postRepository.findAll());
+        PageRequest page = PageRequest.of(offset, limit);
 
-    }
+        List<Post> posts = new ArrayList<>();
 
-    @Override
-    public GeneralPostDto getMostDiscussedPosts() {
+        switch (mode) {
 
-        return mapper.toGeneralPostDto(postRepository.findPostsAndSortedByComments()
-                .stream()
-                .filter(p -> p.getIsActive() == 1)
-                .filter(p -> p.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                .collect(Collectors.toList()));
+            case "popular":
+                posts = getMostPopularPosts(page);
+                break;
+            case "recent":
+                posts = getRecentPosts(page);
+                break;
+            case "best":
+                posts = getMostLikedPosts(page);
+                break;
+            case "early":
+                posts = getOldestPosts(page);
+                break;
 
-    }
-
-    @Override
-    public GeneralPostDto getMostRecentPosts() {
-        return mapper.toGeneralPostDto(postRepository.findPostsAndSortByRecentDate().stream()
-                .filter(p -> p.getIsActive() == 1)
-                .filter(p -> p.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                .collect(Collectors.toList()));
-    }
-
-    @Override
-    public GeneralPostDto getMostLikedPosts() {
-
-        List<Post> posts = postRepository.findAll().stream()
-                .filter(p -> p.getIsActive() == 1)
-                .filter(p -> p.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                .collect(Collectors.toList());
-
-
-        List<Post> likedPosts = new ArrayList<>();
-
-        int currentPostLikes;
-
-        likedPosts.add(posts.get(0));
-
-        for (int i = 1; i < posts.size(); i++) {
-
-
-            currentPostLikes = likeCount(posts.get(i).getListVotes());
-            if (currentPostLikes >= likeCount(posts.get(i - 1).getListVotes())) {
-                likedPosts.add(i - 1, posts.get(i));
-            } else {
-                likedPosts.add(posts.get(i));
-            }
-
+            default:
+                new ArrayList<>();
 
         }
 
-        return mapper.toGeneralPostDto(likedPosts);
+        posts = posts.stream()
+                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
+                .filter(post -> post.getIsActive() == 1)
+                .collect(Collectors.toList());
+
+        return mapper.toGeneralPostDto(posts);
 
     }
 
-    @Override
-    public GeneralPostDto getMostOldPosts() {
+    private List<Post> getMostPopularPosts(Pageable pageable) {
 
-        return mapper.toGeneralPostDto(postRepository.findOldestPosts().stream()
-                .filter(p -> p.getIsActive() == 1)
-                .filter(p -> p.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                .collect(Collectors.toList()));
+
+        Page<Post> all = postRepository.findPostsSortedByComments(pageable);
+
+        List<Post> posts = all.toList();
+
+        posts = posts.stream()
+                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
+                .filter(post -> post.getIsActive() == 1)
+                .collect(Collectors.toList());
+
+        return posts;
 
     }
 
+    private List<Post> getRecentPosts(Pageable pageable) {
 
+
+        Page<Post> recentPosts = postRepository.findRecentPosts(pageable);
+
+        List<Post> posts = recentPosts.toList();
+
+        posts = posts.stream()
+                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
+                .filter(post -> post.getIsActive() == 1)
+                .collect(Collectors.toList());
+
+        return posts;
+
+    }
+
+    private List<Post> getOldestPosts(Pageable pageable) {
+
+        Page<Post> oldestPosts = postRepository.findOldestPosts(pageable);
+
+        List<Post> posts = oldestPosts.toList();
+
+        posts = posts.stream()
+                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
+                .filter(post -> post.getIsActive() == 1)
+                .collect(Collectors.toList());
+
+        return posts;
+
+    }
+
+    private List<Post> getMostLikedPosts(Pageable pageable) {
+
+        //get page
+        Page<Post> allPosts = postRepository.findAll(pageable);
+
+        //convert page to list
+        List<Post> posts = allPosts.toList();
+
+        //create collection of suitable class
+        List<PostForLikes> sortedByLikes = new ArrayList<>();
+
+        //filter posts with required mod. status and activity
+        posts = posts.stream()
+                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
+                .filter(post -> post.getIsActive() == 1)
+                .collect(Collectors.toList());
+
+
+        //creating and fill suitable collection
+        for (Post post : posts) {
+
+            PostForLikes postForLikes = new PostForLikes();
+            postForLikes.setPost(post);
+            postForLikes.setLikesAmount(likeCount(post.getListVotes()));
+
+            sortedByLikes.add(postForLikes);
+
+        }
+
+        //sort it
+        Collections.sort(sortedByLikes);
+
+        List<Post> result = new ArrayList<>();
+
+        for (PostForLikes sortedByLike : sortedByLikes) {
+            Post post = mapper.toPost(sortedByLike);
+            result.add(post);
+        }
+
+        return result;
+
+    }
 
     private int likeCount(List<PostVote> votes) {
 
@@ -114,18 +163,5 @@ public class PostServiceImpl implements PostService {
         }
         return likes;
     }
-
-    private int dislikeCount(List<PostVote> votes) {
-
-        int dislikes = 0;
-        for (PostVote vote : votes) {
-            if (vote.getValue() == -1) {
-                dislikes++;
-            }
-        }
-
-        return dislikes;
-    }
-
 
 }

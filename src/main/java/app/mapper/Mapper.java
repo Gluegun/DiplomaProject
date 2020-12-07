@@ -2,6 +2,7 @@ package app.mapper;
 
 import app.dto.GeneralPostDto;
 import app.dto.PostDto;
+import app.dto.PostForLikes;
 import app.dto.UserDto;
 import app.model.Post;
 import app.model.User;
@@ -15,5 +16,7 @@ public interface Mapper {
     UserDto toUserDto(User user);
 
     GeneralPostDto toGeneralPostDto(List<Post> posts);
+
+    Post toPost(PostForLikes postForLikes);
 
 }

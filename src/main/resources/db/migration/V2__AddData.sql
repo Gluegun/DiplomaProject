@@ -46,3 +46,41 @@ values ('2020-12-01 19:20:21', 1, 2, 3);
 
 insert into post_comments (text, time, post_id, user_id)
 values ('bla-bla-bla', '2020-12-01 19:19:10', 2, 1);
+
+#####
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (1, 'ACCEPTED', 1, 'New post #5', '2019-12-01 19:20:00', 'Title of post #5', 1585, 3);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (1, 'ACCEPTED', 1, 'New post #6', '2020-12-02 23:20:00', 'Title of post #6', 4015, 4);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (1, 'ACCEPTED', 1, 'New post #7', '2020-12-03 20:20:00', 'Title of post #7', 301, 3);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (0, 'NEW', 1, 'New post #8', '2020-12-03 21:20:00', 'Title of post #8', 198, 2);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (1, 'ACCEPTED', 1, 'New post #9', '2020-12-02 19:19:00', 'Title of post #9', 5201, 1);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (1, 'ACCEPTED', 1, 'New post #10', '2020-12-03 23:19:00', 'Title of post #10', 3986, 1);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (1, 'ACCEPTED', 1, 'New post #11', '2020-12-04 20:19:00', 'Title of post #11', 4576, 4);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (0, 'NEW', 1, 'New post #12', '2020-12-05 21:19:00', 'Title of post #12', 4578, 3);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (1, 'ACCEPTED', 1, 'New post #13', '2020-12-06 19:19:00', 'Title of post #13', 3654, 2);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (1, 'ACCEPTED', 1, 'New post #14', '2020-12-07 23:19:00', 'Title of post #14', 145, 1);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (1, 'ACCEPTED', 1, 'New post #15', '2020-12-07 20:19:00', 'Title of post #15', 1650, 2);
+
+insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
+values (0, 'NEW', 1, 'New post #16', '2020-12-09 21:19:00', 'Title of post #16', 1985, 3);

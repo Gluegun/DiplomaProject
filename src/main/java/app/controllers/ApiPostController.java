@@ -17,24 +17,14 @@ public class ApiPostController {
 
     private final PostService postService;
 
+    @GetMapping()
+    public ResponseEntity<GeneralPostDto> getPosts(
+            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = "5", required = false) int limit,
+            @RequestParam(defaultValue = "recent", required = false) String mode) {
 
-    @GetMapping
-    public ResponseEntity<GeneralPostDto> filterPosts(@RequestParam(defaultValue = "recent") String mode) {
+        GeneralPostDto posts = postService.getSortedAndPagedPosts(page, limit, mode);
 
-        switch (mode) {
-            case "popular":
-                return new ResponseEntity<>(postService.getMostDiscussedPosts(), HttpStatus.OK);
-            case "recent":
-                return new ResponseEntity<>(postService.getMostRecentPosts(), HttpStatus.OK);
-            case "best":
-                return new ResponseEntity<>(postService.getMostLikedPosts(), HttpStatus.OK);
-            case "early":
-                return new ResponseEntity<>(postService.getMostOldPosts(), HttpStatus.OK);
-            default:
-                return new ResponseEntity<>(HttpStatus.OK);
-        }
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
-
-
-
 }

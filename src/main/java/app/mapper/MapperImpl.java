@@ -2,6 +2,7 @@ package app.mapper;
 
 import app.dto.GeneralPostDto;
 import app.dto.PostDto;
+import app.dto.PostForLikes;
 import app.dto.UserDto;
 import app.model.Post;
 import app.model.PostVote;
@@ -57,8 +58,9 @@ public class MapperImpl implements Mapper {
     }
 
     private Long convertLocalDateTimeToTimeStamp(LocalDateTime dateToConvert) {
-        ZonedDateTime zdt = dateToConvert.atZone(ZoneId.of("UTC"));
-        return zdt.toInstant().toEpochMilli();
+        ZonedDateTime zdt = dateToConvert.atZone(ZoneId.systemDefault());
+        return zdt.toInstant().toEpochMilli() / 1000;
+
     }
 
     private String cutString(String text) {
@@ -82,6 +84,28 @@ public class MapperImpl implements Mapper {
             return cutText;
 
         } else return text;
+    }
+
+    @Override
+    public Post toPost(PostForLikes post) {
+
+        Post builtPost = Post.builder()
+                .isActive(post.getPost().getIsActive())
+                .listComments(post.getPost().getListComments())
+                .listTags(post.getPost().getListTags())
+                .listVotes(post.getPost().getListVotes())
+                .moderationStatus(post.getPost().getModerationStatus())
+                .text(post.getPost().getText())
+                .time(post.getPost().getTime())
+                .viewCount(post.getPost().getViewCount())
+                .moderator(post.getPost().getModerator())
+                .title(post.getPost().getTitle())
+                .user(post.getPost().getUser())
+                .build();
+
+        builtPost.setId(post.getPost().getId());
+
+        return builtPost;
     }
 
     private int likeCount(List<PostVote> votes) {
