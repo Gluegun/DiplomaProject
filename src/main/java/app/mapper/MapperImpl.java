@@ -57,7 +57,7 @@ public class MapperImpl implements Mapper {
     }
 
     private Long convertLocalDateTimeToTimeStamp(LocalDateTime dateToConvert) {
-        ZonedDateTime zdt = dateToConvert.atZone(ZoneId.systemDefault());
+        ZonedDateTime zdt = dateToConvert.atZone(ZoneId.of("UTC"));
         return zdt.toInstant().toEpochMilli();
     }
 

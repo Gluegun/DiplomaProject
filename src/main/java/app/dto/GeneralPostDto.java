@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -15,10 +14,6 @@ import java.util.List;
 public class GeneralPostDto {
 
     private int count;
-    private List<PostDto> posts = new ArrayList<>();
+    private List<PostDto> posts;
 
-    public void addPost(PostDto post) {
-        posts.add(post);
-        count = posts.size();
-    }
 }

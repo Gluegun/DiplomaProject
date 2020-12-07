@@ -4,6 +4,16 @@ import app.dto.GeneralPostDto;
 
 public interface PostService {
 
-    GeneralPostDto getGeneralPostDtoInfo();
+    GeneralPostDto getPostsActiveAndAcceptedByModerator();
+
+    GeneralPostDto getAllPosts();
+
+    GeneralPostDto getMostDiscussedPosts();
+
+    GeneralPostDto getMostRecentPosts();
+
+    GeneralPostDto getMostLikedPosts();
+
+    GeneralPostDto getMostOldPosts();
 
 }
