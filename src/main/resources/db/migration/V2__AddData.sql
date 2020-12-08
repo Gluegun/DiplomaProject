@@ -77,7 +77,7 @@ insert into posts (is_active, moderation_status, moderator_id, text, time, title
 values (1, 'ACCEPTED', 1, 'New post #13', '2020-12-06 19:19:00', 'Title of post #13', 3654, 2);
 
 insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
-values (1, 'ACCEPTED', 1, 'New post #14', '2020-12-07 23:19:00', 'Title of post #14', 145, 1);
+values (1, 'ACCEPTED', 1, 'New post #14', '2020-12-07 23:19:00', 'How good to code (title of post #14)', 145, 1);
 
 insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
 values (1, 'ACCEPTED', 1, 'New post #15', '2020-12-07 20:19:00', 'Title of post #15', 1650, 2);

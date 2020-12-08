@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -18,6 +19,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query("select p from Post p order by p.time")
     Page<Post> findOldestPosts(Pageable pageable);
+
+    @Query("select p from Post p where p.title LIKE %:query%")
+    Page<Post> findByQuery(@Param("query") String query, Pageable pageable);
 
 
 }

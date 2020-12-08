@@ -19,12 +19,22 @@ public class ApiPostController {
 
     @GetMapping()
     public ResponseEntity<GeneralPostDto> getPosts(
-            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = "0", required = false) int offset,
             @RequestParam(defaultValue = "5", required = false) int limit,
             @RequestParam(defaultValue = "recent", required = false) String mode) {
 
-        GeneralPostDto posts = postService.getSortedAndPagedPosts(page, limit, mode);
+        GeneralPostDto posts = postService.getSortedAndPagedPosts(offset, limit, mode);
 
         return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<GeneralPostDto> findPosts(
+            @RequestParam(defaultValue = "", required = false) String query,
+            @RequestParam(defaultValue = "0", required = false) int offset,
+            @RequestParam(defaultValue = "5", required = false) int limit) {
+
+        return new ResponseEntity<>(postService.findPostsByQuery(query, offset, limit), HttpStatus.OK);
+
     }
 }

@@ -67,6 +67,29 @@ public class PostServiceImpl implements PostService {
 
     }
 
+    @Override
+    public GeneralPostDto findPostsByQuery(String query, int offset, int limit) {
+
+        if (query.isEmpty()) {
+            List<Post> all = postRepository.findAll();
+            List<Post> collect = all.stream()
+                    .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
+                    .filter(post -> post.getIsActive() == 1)
+                    .filter(post -> post.getTime().isBefore(LocalDateTime.now()))
+                    .collect(Collectors.toList());
+            return mapper.toGeneralPostDto(collect);
+        }
+
+
+        PageRequest page = PageRequest.of(offset, limit);
+
+        List<Post> posts = postRepository.findByQuery(query, page).toList();
+
+        return mapper.toGeneralPostDto(posts);
+
+
+    }
+
     private List<Post> getMostLikedPosts(Pageable pageable) {
 
         //get page
