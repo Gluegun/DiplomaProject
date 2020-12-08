@@ -15,7 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -37,16 +40,16 @@ public class PostServiceImpl implements PostService {
         switch (mode) {
 
             case "popular":
-                posts = getMostPopularPosts(page);
+                posts = postRepository.findPostsSortedByComments(page).toList();
                 break;
             case "recent":
-                posts = getRecentPosts(page);
+                posts = postRepository.findRecentPosts(page).toList();
                 break;
             case "best":
                 posts = getMostLikedPosts(page);
                 break;
             case "early":
-                posts = getOldestPosts(page);
+                posts = postRepository.findOldestPosts(page).toList();
                 break;
 
             default:
@@ -57,56 +60,10 @@ public class PostServiceImpl implements PostService {
         posts = posts.stream()
                 .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
                 .filter(post -> post.getIsActive() == 1)
+                .filter(post -> post.getTime().isBefore(LocalDateTime.now()))
                 .collect(Collectors.toList());
 
         return mapper.toGeneralPostDto(posts);
-
-    }
-
-    private List<Post> getMostPopularPosts(Pageable pageable) {
-
-
-        Page<Post> all = postRepository.findPostsSortedByComments(pageable);
-
-        List<Post> posts = all.toList();
-
-        posts = posts.stream()
-                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                .filter(post -> post.getIsActive() == 1)
-                .collect(Collectors.toList());
-
-        return posts;
-
-    }
-
-    private List<Post> getRecentPosts(Pageable pageable) {
-
-
-        Page<Post> recentPosts = postRepository.findRecentPosts(pageable);
-
-        List<Post> posts = recentPosts.toList();
-
-        posts = posts.stream()
-                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                .filter(post -> post.getIsActive() == 1)
-                .collect(Collectors.toList());
-
-        return posts;
-
-    }
-
-    private List<Post> getOldestPosts(Pageable pageable) {
-
-        Page<Post> oldestPosts = postRepository.findOldestPosts(pageable);
-
-        List<Post> posts = oldestPosts.toList();
-
-        posts = posts.stream()
-                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                .filter(post -> post.getIsActive() == 1)
-                .collect(Collectors.toList());
-
-        return posts;
 
     }
 
@@ -120,13 +77,6 @@ public class PostServiceImpl implements PostService {
 
         //create collection of suitable class
         List<PostForLikes> sortedByLikes = new ArrayList<>();
-
-        //filter posts with required mod. status and activity
-        posts = posts.stream()
-                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                .filter(post -> post.getIsActive() == 1)
-                .collect(Collectors.toList());
-
 
         //creating and fill suitable collection
         for (Post post : posts) {
