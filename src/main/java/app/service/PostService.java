@@ -9,4 +9,8 @@ public interface PostService {
 
     GeneralPostDto findPostsByQuery(String query, int offset, int limit);
 
+    GeneralPostDto findByDate(String date, int offset, int limit);
+
+    GeneralPostDto findByTag(String tag, int offset, int limit);
+
 }

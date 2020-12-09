@@ -5,6 +5,7 @@ import app.dto.PostForLikes;
 import app.mapper.Mapper;
 import app.model.Post;
 import app.model.PostVote;
+import app.model.Tag;
 import app.model.enums.ModerationStatus;
 import app.repos.PostRepository;
 import app.service.PostService;
@@ -15,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -57,13 +60,7 @@ public class PostServiceImpl implements PostService {
 
         }
 
-        posts = posts.stream()
-                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                .filter(post -> post.getIsActive() == 1)
-                .filter(post -> post.getTime().isBefore(LocalDateTime.now()))
-                .collect(Collectors.toList());
-
-        return mapper.toGeneralPostDto(posts);
+        return getFilteredPosts(posts);
 
     }
 
@@ -71,13 +68,10 @@ public class PostServiceImpl implements PostService {
     public GeneralPostDto findPostsByQuery(String query, int offset, int limit) {
 
         if (query.isEmpty()) {
+
             List<Post> all = postRepository.findAll();
-            List<Post> collect = all.stream()
-                    .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
-                    .filter(post -> post.getIsActive() == 1)
-                    .filter(post -> post.getTime().isBefore(LocalDateTime.now()))
-                    .collect(Collectors.toList());
-            return mapper.toGeneralPostDto(collect);
+
+            return getFilteredPosts(all);
         }
 
 
@@ -85,7 +79,69 @@ public class PostServiceImpl implements PostService {
 
         List<Post> posts = postRepository.findByQuery(query, page).toList();
 
-        return mapper.toGeneralPostDto(posts);
+        return getFilteredPosts(posts);
+
+
+    }
+
+    @Override
+    public GeneralPostDto findByDate(String date, int offset, int limit) {
+
+        PageRequest page = PageRequest.of(offset, limit);
+
+        if (date.isEmpty() || date.isBlank()) {
+
+            Page<Post> all = postRepository.findAll(page);
+
+            return getFilteredPosts(all.toList());
+
+        }
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        LocalDate timeFrom = LocalDate.parse(date, dateTimeFormatter);
+        LocalDate timeTo = timeFrom.plusDays(1);
+
+
+        Page<Post> posts = postRepository.findByTime(timeFrom, timeTo, page);
+
+        return getFilteredPosts(posts.toList());
+
+
+    }
+
+    @Override
+    public GeneralPostDto findByTag(String tagName, int offset, int limit) {
+
+
+        //todo без пагинации находит, с ней нет. Надо подумать
+        
+        PageRequest page = PageRequest.of(offset, limit);
+
+        Page<Post> allPosts = postRepository.findAll(page);
+
+        if (tagName.isBlank() || tagName.isEmpty()) {
+
+            return getFilteredPosts(allPosts.toList());
+
+        }
+
+        List<Post> posts = allPosts.toList();
+
+        List<Post> matchedPosts = new ArrayList<>();
+
+        for (Post post : posts) {
+
+            for (Tag tag : post.getListTags()) {
+
+                if (tag.getName().equals(tagName)) {
+                    matchedPosts.add(post);
+                }
+
+            }
+        }
+
+        return getFilteredPosts(matchedPosts);
 
 
     }
@@ -135,6 +191,19 @@ public class PostServiceImpl implements PostService {
             }
         }
         return likes;
+    }
+
+    private GeneralPostDto getFilteredPosts(List<Post> posts) {
+
+
+        posts = posts.stream()
+                .filter(post -> post.getModerationStatus().equals(ModerationStatus.ACCEPTED))
+                .filter(post -> post.getIsActive() == 1)
+                .filter(post -> post.getTime().isBefore(LocalDateTime.now()))
+                .collect(Collectors.toList());
+
+        return mapper.toGeneralPostDto(posts);
+
     }
 
 }

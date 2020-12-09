@@ -83,6 +83,25 @@ insert into posts (is_active, moderation_status, moderator_id, text, time, title
 values (1, 'ACCEPTED', 1, 'New post #15', '2020-12-07 20:19:00', 'Title of post #15', 1650, 2);
 
 insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
-values (1, 'ACCEPTED', 1, 'New post #16', '2020-12-12 21:19:00', 'Title of post #16', 1985, 3);
+values (1, 'ACCEPTED', 1, 'New post #16', '2020-12-09 10:30:00', 'Title of post #16', 1985, 3);
+
+
+insert into tags (name)
+values ('sport');
+insert into tags (name)
+values ('politics');
+insert into tags (name)
+values ('coding');
+insert into tags (name)
+values ('finance');
+
+insert into tag2post (post_id, tag_id)
+values (16, 3);
+
+insert into tag2post (post_id, tag_id)
+values (1, 1);
+
+insert into tag2post (post_id, tag_id)
+values (2, 2);
 
 

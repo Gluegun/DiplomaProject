@@ -23,9 +23,7 @@ public class ApiPostController {
             @RequestParam(defaultValue = "5", required = false) int limit,
             @RequestParam(defaultValue = "recent", required = false) String mode) {
 
-        GeneralPostDto posts = postService.getSortedAndPagedPosts(offset, limit, mode);
-
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+        return new ResponseEntity<>(postService.getSortedAndPagedPosts(offset, limit, mode), HttpStatus.OK);
     }
 
     @GetMapping("/search")
@@ -35,6 +33,26 @@ public class ApiPostController {
             @RequestParam(defaultValue = "5", required = false) int limit) {
 
         return new ResponseEntity<>(postService.findPostsByQuery(query, offset, limit), HttpStatus.OK);
+
+    }
+
+    @GetMapping("/byDate")
+    public ResponseEntity<GeneralPostDto> findPostsByDate(
+            @RequestParam(defaultValue = "", required = false) String date,
+            @RequestParam(defaultValue = "0", required = false) int offset,
+            @RequestParam(defaultValue = "5", required = false) int limit) {
+
+        return new ResponseEntity<>(postService.findByDate(date, offset, limit), HttpStatus.OK);
+
+    }
+
+    @GetMapping("/byTag")
+    public ResponseEntity<GeneralPostDto> findPostsByTag(
+            @RequestParam(defaultValue = "", required = false) String tag,
+            @RequestParam(defaultValue = "0", required = false) int offset,
+            @RequestParam(defaultValue = "5", required = false) int limit) {
+
+        return new ResponseEntity<>(postService.findByTag(tag, offset, limit), HttpStatus.OK);
 
     }
 }
