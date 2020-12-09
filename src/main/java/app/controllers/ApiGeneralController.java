@@ -19,7 +19,6 @@ public class ApiGeneralController {
         return new Blog();
     }
 
-
     @GetMapping("/settings")
     public String settings() {
         return null;

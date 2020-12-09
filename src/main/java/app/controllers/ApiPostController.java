@@ -55,4 +55,9 @@ public class ApiPostController {
         return new ResponseEntity<>(postService.findByTag(tag, offset, limit), HttpStatus.OK);
 
     }
+
+    @GetMapping("/moderation")
+    public ResponseEntity<GeneralPostDto> findPostsToBeModerated() {
+        return null;
+    }
 }
