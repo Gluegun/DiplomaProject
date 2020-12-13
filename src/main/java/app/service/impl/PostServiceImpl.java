@@ -1,6 +1,7 @@
 package app.service.impl;
 
 import app.dto.GeneralPostDto;
+import app.dto.PostDtoWithComments;
 import app.dto.PostForLikes;
 import app.mapper.Mapper;
 import app.model.Post;
@@ -22,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -115,7 +117,7 @@ public class PostServiceImpl implements PostService {
 
 
         //todo без пагинации находит, с ней нет. Надо подумать
-        
+
         PageRequest page = PageRequest.of(offset, limit);
 
         Page<Post> allPosts = postRepository.findAll(page);
@@ -143,6 +145,18 @@ public class PostServiceImpl implements PostService {
 
         return getFilteredPosts(matchedPosts);
 
+
+    }
+
+    @Override
+    public PostDtoWithComments findById(int id) {
+
+        Optional<Post> postById = postRepository.findById(id);
+
+        if (postById.isPresent()) {
+            Post post = postById.get();
+            return mapper.toPostDtoWithComments(post);
+        } else return null;
 
     }
 

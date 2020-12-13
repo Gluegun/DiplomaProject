@@ -1,19 +1,14 @@
 package app.mapper;
 
-import app.dto.GeneralPostDto;
-import app.dto.PostDto;
-import app.dto.PostForLikes;
-import app.dto.UserDto;
-import app.model.Post;
-import app.model.PostVote;
-import app.model.Role;
-import app.model.User;
+import app.dto.*;
+import app.model.*;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,6 +83,27 @@ public class MapperImpl implements Mapper {
         return builtPost;
     }
 
+
+    @Override
+    public PostDtoWithComments toPostDtoWithComments(Post post) {
+
+        return PostDtoWithComments.builder()
+                .id(post.getId())
+                .timestamp(convertLocalDateTimeToTimeStamp(post.getTime()))
+                .isActive(byteToBool(post.getIsActive()))
+                .user(toUserDto(post.getUser()))
+                .title(post.getTitle())
+                .text(post.getText())
+                .likeCount(likeCount(post.getListVotes()))
+                .dislikeCount(dislikeCount(post.getListVotes()))
+                .viewCount(post.getViewCount())
+                .tags(getTagsFromPost(post.getListTags()))
+                .comments(toListCommentsDto(post.getListComments()))
+
+                .build();
+
+    }
+
     private Set<Role> getRolesFromUserStatus(byte isModerator) {
 
         Set<Role> roles = new HashSet<>();
@@ -100,9 +116,62 @@ public class MapperImpl implements Mapper {
 
     }
 
+    private List<String> getTagsFromPost(List<Tag> tags) {
+
+        return tags.stream().map(Tag::getName).collect(Collectors.toList());
+
+
+    }
+
     private Long convertLocalDateTimeToTimeStamp(LocalDateTime dateToConvert) {
         ZonedDateTime zdt = dateToConvert.atZone(ZoneId.systemDefault());
         return zdt.toInstant().toEpochMilli() / 1000;
+
+    }
+
+    private boolean byteToBool(byte isActive) {
+
+        return isActive > 0;
+
+    }
+
+    private List<CommentDto> toListCommentsDto(List<PostComment> comments) {
+
+        List<CommentDto> commentDtos = new ArrayList<>();
+
+        for (PostComment comment : comments) {
+
+            commentDtos.add(toCommentsDto(comment));
+
+        }
+
+        return commentDtos;
+
+    }
+
+    private CommentDto toCommentsDto(PostComment comment) {
+
+        return CommentDto.builder()
+                .id(comment.getId())
+                .timestamp(convertLocalDateTimeToTimeStamp(comment.getTime()))
+                .text(comment.getText())
+                .user(toUserDtoWithPhoto(comment.getUser()))
+                .build();
+
+    }
+
+    private UserDtoWithPhoto toUserDtoWithPhoto(User user) {
+
+        String photoLink = "";
+        if (!user.getPhotoLink().isEmpty() || user.getPhotoLink() == null) {
+            photoLink = user.getPhotoLink();
+        }
+
+        return UserDtoWithPhoto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .photo(photoLink)
+                .build();
 
     }
 

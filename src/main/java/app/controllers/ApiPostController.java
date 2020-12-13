@@ -1,14 +1,12 @@
 package app.controllers;
 
 import app.dto.GeneralPostDto;
+import app.dto.PostDtoWithComments;
 import app.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/post")
@@ -59,5 +57,10 @@ public class ApiPostController {
     @GetMapping("/moderation")
     public ResponseEntity<GeneralPostDto> findPostsToBeModerated() {
         return null;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDtoWithComments> getPostById(@PathVariable int id) {
+        return new ResponseEntity<>(postService.findById(id), HttpStatus.OK);
     }
 }

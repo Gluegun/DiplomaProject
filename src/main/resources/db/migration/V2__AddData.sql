@@ -47,6 +47,10 @@ values ('2020-12-01 19:20:21', 1, 2, 3);
 insert into post_comments (text, time, post_id, user_id)
 values ('bla-bla-bla', '2020-12-01 19:19:10', 2, 1);
 
+insert into post_comments (text, time, post_id, user_id)
+values ('bla-bla-bla', '2020-12-01 19:20:00', 1, 1);
+
+
 #####
 
 insert into posts (is_active, moderation_status, moderator_id, text, time, title, view_count, user_id)
@@ -102,6 +106,12 @@ insert into tag2post (post_id, tag_id)
 values (1, 1);
 
 insert into tag2post (post_id, tag_id)
+values (1, 2);
+
+insert into tag2post (post_id, tag_id)
 values (2, 2);
+
+
+
 
 

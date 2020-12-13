@@ -23,6 +23,7 @@ public class UserDto {
     private String password;
     @JsonIgnore
     private String userName;
+    @JsonIgnore
     private Set<Role> roles;
 
 }

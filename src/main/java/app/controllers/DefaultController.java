@@ -9,15 +9,5 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class DefaultController {
 
-//    private final UserService userService;
-//
-//    @GetMapping()
-//    private ResponseEntity<UserDetails> getUserDetail(
-//            @RequestParam(required = false, defaultValue = "") String email) {
-//
-//        return new ResponseEntity<>(userService.loadUserByUsername(email), HttpStatus.OK);
-//
-//    }
-
 
 }
