@@ -50,6 +50,9 @@ values ('bla-bla-bla', '2020-12-01 19:19:10', 2, 1);
 insert into post_comments (text, time, post_id, user_id)
 values ('bla-bla-bla', '2020-12-01 19:20:00', 1, 1);
 
+insert into post_comments (parent_id, text, time, post_id, user_id)
+values (2, 'сам ты блабла', '2020-12-01 19:20:01', 1, 2);
+
 
 #####
 

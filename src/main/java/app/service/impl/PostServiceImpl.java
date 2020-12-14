@@ -3,6 +3,7 @@ package app.service.impl;
 import app.dto.GeneralPostDto;
 import app.dto.PostDtoWithComments;
 import app.dto.PostForLikes;
+import app.dto.PostForYear;
 import app.mapper.Mapper;
 import app.model.Post;
 import app.model.PostVote;
@@ -157,6 +158,30 @@ public class PostServiceImpl implements PostService {
             Post post = postById.get();
             return mapper.toPostDtoWithComments(post);
         } else return null;
+
+    }
+
+    @Override
+    public PostForYear getCalendar(String year) {
+
+        List<Post> allPosts = postRepository.findAll();
+
+        if (year.isEmpty()) {
+            return mapper.toPostForYear(allPosts, allPosts);
+        }
+
+        List<Post> postsWithNeededYear = new ArrayList<>();
+
+        for (Post post : allPosts) {
+
+            String yearOfPost = String.valueOf(post.getTime().getYear());
+            if (year.equals(yearOfPost)) {
+                postsWithNeededYear.add(post);
+            }
+        }
+
+        return mapper.toPostForYear(allPosts, postsWithNeededYear);
+
 
     }
 

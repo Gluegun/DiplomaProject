@@ -8,10 +8,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -42,7 +39,7 @@ public class MapperImpl implements Mapper {
                 .id(user.getId())
                 .name(user.getName())
                 .isModerator(user.getIsModerator())
-                .roles(getRolesFromUserStatus(user.getIsModerator()))
+                .roles(getRolesByUserStatus(user.getIsModerator()))
                 .password(user.getPassword())
                 .userName(user.getEmail())
                 .build();
@@ -60,6 +57,14 @@ public class MapperImpl implements Mapper {
 
     }
 
+    @Override
+    public TagDto toTagDto(Tag tag) {
+
+        return TagDto.builder()
+                .name(tag.getName())
+                .build();
+
+    }
 
     @Override
     public Post toPost(PostForLikes post) {
@@ -104,7 +109,53 @@ public class MapperImpl implements Mapper {
 
     }
 
-    private Set<Role> getRolesFromUserStatus(byte isModerator) {
+    @Override
+    public PostForYear toPostForYear(List<Post> allPosts, List<Post> requiredPosts) {
+
+        return PostForYear.builder()
+                .years(getYears(allPosts))
+                .posts(getPosts(requiredPosts))
+                .build();
+
+    }
+
+    private Map<String, Integer> getPosts(List<Post> posts) {
+
+        Map<String, Integer> yearsAndPosts = new HashMap<>();
+
+        for (Post post : posts) {
+
+            int day = post.getTime().getDayOfMonth();
+            int month = post.getTime().getMonth().getValue();
+            int year = post.getTime().getYear();
+
+            String postTime = String.format("%s-%s-%s", year, month, day);
+
+            if (!yearsAndPosts.containsKey(postTime)) {
+                yearsAndPosts.put(postTime, 1);
+            } else yearsAndPosts.put(postTime, yearsAndPosts.get(postTime) + 1);
+
+        }
+
+        return new TreeMap<>(yearsAndPosts);
+
+    }
+
+    private List<Integer> getYears(List<Post> posts) {
+
+        Set<Integer> years = new HashSet<>();
+
+        for (Post post : posts) {
+            years.add(post.getTime().getYear());
+        }
+
+        return new ArrayList<>(years);
+
+
+    }
+
+
+    private Set<Role> getRolesByUserStatus(byte isModerator) {
 
         Set<Role> roles = new HashSet<>();
         if (isModerator == 1) {

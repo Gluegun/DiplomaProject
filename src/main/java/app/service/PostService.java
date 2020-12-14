@@ -2,6 +2,7 @@ package app.service;
 
 import app.dto.GeneralPostDto;
 import app.dto.PostDtoWithComments;
+import app.dto.PostForYear;
 
 public interface PostService {
 
@@ -15,5 +16,7 @@ public interface PostService {
     GeneralPostDto findByTag(String tag, int offset, int limit);
 
     PostDtoWithComments findById(int id);
+
+    PostForYear getCalendar(String year);
 
 }
